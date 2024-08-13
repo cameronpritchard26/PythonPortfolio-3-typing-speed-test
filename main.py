@@ -1,0 +1,47 @@
+from tkinter import *
+from tkinter.messagebox import showinfo
+
+seconds = 60
+
+window = Tk()
+
+window.title("Typing Speed Test")
+window.geometry("800x400")
+
+# Create a label widget
+label = Label(window, text="Welcome to Typing Speed Test", font=("Arial", 24))
+label.pack()
+
+timer = Label(window, text=f"Time left: {seconds}", font=("Arial", 16))
+timer.pack()
+
+# Create a text widget
+text = Text(window, font=("Arial", 16))
+text.pack()
+
+# Detect if the user has typed anything
+def on_key_release(event):
+    start_timer()
+    text.unbind("<KeyRelease>")
+
+def start_timer():
+    global seconds
+    if seconds == 0:
+        text.config(state=DISABLED)
+        showinfo("Typing Speed Test", f"Your speed is {calculate_speed()} characters per minute")
+        return
+    seconds -= 1
+    timer.config(text=f"Time left: {seconds}")
+    timer.after(1000, start_timer)
+
+def calculate_speed():
+    text_content = text.get("1.0", END)
+    words = text_content.split()
+    num_words = len(words)
+    num_chars = len(text_content) - num_words + 1
+    speed = num_chars / 5
+    return speed
+
+text.bind("<KeyRelease>", on_key_release)
+
+window.mainloop()
